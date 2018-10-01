@@ -402,7 +402,7 @@ angular.module("ngRadialGauge",[]).directive('ngRadialGauge', ['$window', '$time
  }]);
 
     </script>
-    <script src=saveSvgAsPng.js></script>
+    <script src=src/svg-saver.js></script>
     <script>
     angular.module('RadialGaugeDemo', [
       'ngRadialGauge'
@@ -443,7 +443,8 @@ angular.module("ngRadialGauge",[]).directive('ngRadialGauge', ['$window', '$time
         ];
         $scope.OnClick = function() {
             console.log("click");
-            svgAsDataUri(document.getElementsByTagName("svg")[0], null, function (uri) {                          
+            var svgSaver = new SvgSaver(window);
+            svgSaver.svgAsDataUri(document.getElementsByTagName("svg")[0], null, function (uri) {                          
             var img = '<img class="img-thumbnail" src="' + uri + '">';
             d3.select("#svgpreview").html(img);
             });

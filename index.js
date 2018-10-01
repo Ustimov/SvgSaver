@@ -1,3 +1,5 @@
+const svgSaver = new SvgSaver(window);
+
 function handleFileSelect(evt) {
   const $el = $('#filereader');
   const files = evt.target.files;
@@ -5,11 +7,11 @@ function handleFileSelect(evt) {
     const reader = new FileReader();
     reader.onload = e => {
       $el.find('.load-target').html(e.target.result);
-      svgAsPngUri($el.find('.load-target svg')[0], null, uri => {
+      svgSaver.svgAsPngUri($el.find('.load-target svg')[0], null, uri => {
         $el.find('input').hide()
         $el.find('.preview').html('<img src="' + uri + '" />');
       });
-      $el.find('.save').click(() => saveSvgAsPng($el.find('.load-target svg')[0], 'test.png'));
+      $el.find('.save').click(() => svgSaver.saveSvgAsPng($el.find('.load-target svg')[0], 'test.png'));
     };
     reader.readAsText(f);
   });
@@ -27,10 +29,10 @@ function inlineTest(title, $el, saveOptions, testOptions) {
   row.find('.canvas').html(svg);
 
   const canvas = row.find(testOptions && testOptions.selector || 'svg')[0];
-  svgAsPngUri(canvas, saveOptions)
+  svgSaver.svgAsPngUri(canvas, saveOptions)
     .then(uri => row.find('.preview').html('<img src="' + uri + '" />'));
 
-  row.find('.save').click(() => saveSvgAsPng(canvas, 'test.png', saveOptions));
+  row.find('.save').click(() => svgSaver.saveSvgAsPng(canvas, 'test.png', saveOptions));
 }
 
 inlineTest('Directly in the HTML', $('#inline'));
@@ -79,8 +81,8 @@ $sandbox.find('.render').click(() => {
   $sandbox.find('.load-target').html($('#sandbox textarea').val());
   const canvas = $sandbox.find('.load-target svg')[0];
   try {
-    svgAsPngUri(canvas, null, uri => $sandbox.find('.preview').html('<img src="' + uri + '" />'));
-    $sandbox.find('.save').unbind('click').click(() => saveSvgAsPng(canvas, 'test.png'));
+    svgSaver.svgAsPngUri(canvas, null, uri => $sandbox.find('.preview').html('<img src="' + uri + '" />'));
+    $sandbox.find('.save').unbind('click').click(() => svgSaver.saveSvgAsPng(canvas, 'test.png'));
   } catch(err) {
     $sandbox.find('.error').show().text(err.message);
     $sandbox.find('.preview').html('');

@@ -1,6 +1,15 @@
-(function() {
-  const out$ = typeof exports != 'undefined' && exports || typeof define != 'undefined' && {} || this || window;
-  if (typeof define !== 'undefined') define('save-svg-as-png', [], () => out$);
+if (typeof module !== 'undefined') {
+    module.exports = SvgSaver;
+}
+
+function SvgSaver (ctx) {
+  const window = ctx;
+  const document = ctx.document;
+  const Image = ctx.Image;
+  const HTMLElement = ctx.HTMLElement;
+  const SVGElement = ctx.SVGElement;
+
+  const out$ = {};
 
   const xmlns = 'http://www.w3.org/2000/xmlns/';
   const doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [<!ENTITY nbsp "&#160;">]>';
@@ -120,7 +129,6 @@
         const canvas = document.createElement('canvas');
         const img = new Image();
         img.crossOrigin = 'anonymous';
-        img.src = href;
         img.onerror = () => reject(new Error(`Could not load ${href}`));
         img.onload = () => {
           canvas.width = img.width;
@@ -129,6 +137,7 @@
           image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', canvas.toDataURL('image/png'));
           resolve(true);
         };
+        img.src = href;
       });
     })
   );
@@ -370,4 +379,6 @@
     requireDomNode(el);
     out$.svgAsPngUri(el, options || {}, uri => out$.download(name, uri));
   };
-})();
+
+  return out$;
+}

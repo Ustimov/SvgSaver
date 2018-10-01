@@ -1,21 +1,31 @@
-# saveSvgAsPng
+# SvgSaver
+
+Save SVGs as PNGs from the browser or as URIs in Node.js
 
 ## Installation
 
 ```
-npm install save-svg-as-png
+npm install svg-saver
 ```
 
 ## Prerequisites
 
-SaveSvgAsPng relies on JavaScript promises, so any browsers that don't natively support the standard `Promise` object will need to have a polyfill.
+SvgSaver relies on JavaScript promises, so any browsers that don't natively support the standard `Promise` object will need to have a polyfill.
 
 ## Usage
 
-To save a PNG, include the script `saveSvgAsPng.js` in your page, then call the `saveSvgAsPng` function with an SVG node and a filename:
+### Browser
+
+To save a PNG, include the script `svg-saver.js` in your page and create a new `SvgSaver` instance:
 
 ```javascript
-saveSvgAsPng(document.getElementById("diagram"), "diagram.png");
+var svgSaver = new SvgSaver(window);
+```
+
+Then call the `saveSvgAsPng` object's method with an SVG node and a filename:
+
+```javascript
+svgSaver.saveSvgAsPng(document.getElementById("diagram"), "diagram.png");
 ```
 
 The filename is the preferred filename when saving the image to the file system. The browser may change the name of the file if there is already a file by that name in the target directory.
@@ -23,7 +33,7 @@ The filename is the preferred filename when saving the image to the file system.
 If you want to scale the image up or down, you can pass a scale factor in an options object:
 
 ```javascript
-saveSvgAsPng(document.getElementById("diagram"), "diagram.png", {scale: 0.5});
+svgSaver.saveSvgAsPng(document.getElementById("diagram"), "diagram.png", {scale: 0.5});
 ```
 
 Other options are documented below.
@@ -31,7 +41,7 @@ Other options are documented below.
 If you just want a dataURI for an SVG, you can call `svgAsDataUri` with an SVG node, options, and a callback:
 
 ```javascript
-svgAsDataUri(document.getElementById("diagram"), {}, function(uri) {
+svgSaver.svgAsDataUri(document.getElementById("diagram"), {}, function(uri) {
   ...
 });
 ```
@@ -39,14 +49,10 @@ svgAsDataUri(document.getElementById("diagram"), {}, function(uri) {
 If you want a dataURI of a PNG generated from an SVG, you can call `svgAsPngUri` with an SVG node, options, and a callback:
 
 ```javascript
-svgAsPngUri(document.getElementById("diagram"), {}, function(uri) {
+svgSaver.svgAsPngUri(document.getElementById("diagram"), {}, function(uri) {
   ...
 });
 ```
-
-Compatible with [browserify](http://browserify.org/) and [requirejs](http://requirejs.org).
-
-If you want to use TypeScript, necessary [type definitions](https://github.com/martianov/typed-save-svg-as-png) are available in [Typings](https://github.com/typings/typings) [public registry](https://github.com/typings/registry).
 
 ### Options
 
@@ -64,15 +70,53 @@ If you want to use TypeScript, necessary [type definitions](https://github.com/m
 - `top` - Specify the viewbox's top position. Defaults to 0.
 - `width` - Specify the image's width. Defaults to the viewbox's width if given, or the element's non-percentage width, or the element's bounding box's width, or the element's CSS width, or the computed style's width, or 0.
 
-### Testing
-
-run tests with [tape](https://www.npmjs.com/package/tape)
-```bash
-npm test
-```
-
-## Support
+### Support
 
 [Chrome limits data URIs to 2MB](http://stackoverflow.com/questions/695151/data-protocol-url-size-limitations/41755526#41755526), so you may have trouble generating PNGs beyod a certain size.
 
 Internet Explorer will only work if [canvg](https://github.com/canvg/canvg) is passed in, otherwise it will throw a `SecurityError` when calling `toDataURL` on a canvas that's been written to. [canvg](https://github.com/canvg/canvg) may have it's own issues with SVG support, so ensure you test the output after switching.
+
+## Node.js
+
+In order to use the library with Node.js you need to install [jsdom](https://github.com/jsdom/jsdom) and [node canvas v2](https://github.com/Automattic/node-canvas).
+
+Then create an `JSDOM` instance, decorate its `createElement` method to create a node canvas instance and replace the `Image` constructor:
+
+
+```javascript
+const { createCanvas, Image } = require('canvas');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+
+const { window } = new JSDOM(`
+    <html>
+        <!-- So you can use local resources -->
+        <link rel="stylesheet" href="file://bootstrap.min.css">
+        <body></body>
+    </html>`, {
+    resources: "usable"
+});
+
+var backup = window.document.createElement;
+window.document.createElement = function (el) {
+    if (el === 'canvas') {
+        return createCanvas(500, 500);
+    } else {
+        return backup.bind(window.document)(el);
+    }
+}
+window.Image = Image;
+```
+
+Now create a new `SvgSaver` instance and pass the `window` instance:
+
+```javascript
+const SvgSaver = require("svg-saver");
+const svgSaver = new SvgSaver(window);
+
+svgSaver.svgAsDataUri(window.document.getElementById("diagram"), {}, function(uri) {
+  ...
+});
+```
+
+Then you can use the library like in [browser](#Browser), but only "as uri" methods.
