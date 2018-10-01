@@ -76,6 +76,10 @@ svgSaver.svgAsPngUri(document.getElementById("diagram"), {}, function(uri) {
 
 Internet Explorer will only work if [canvg](https://github.com/canvg/canvg) is passed in, otherwise it will throw a `SecurityError` when calling `toDataURL` on a canvas that's been written to. [canvg](https://github.com/canvg/canvg) may have it's own issues with SVG support, so ensure you test the output after switching.
 
+### Demo
+
+[GitHub Pages](https://ustimov.github.io/SvgSaver/)
+
 ## Node.js
 
 In order to use the library with Node.js you need to install [jsdom](https://github.com/jsdom/jsdom) and [node canvas v2](https://github.com/Automattic/node-canvas).
