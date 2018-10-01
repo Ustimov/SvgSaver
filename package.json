@@ -1,8 +1,8 @@
 {
-  "name": "svg-saver",
+  "name": "svg-saver-node",
   "version": "0.0.1",
-  "description": "Convert a browser SVG to PNG or dataUri",
-  "main": "lib/svg-saver.js",
+  "description": "Save SVGs as PNGs from the browser or as Data URIs in Node.js",
+  "main": "lib/svg-saver-node.js",
   "scripts": {
     "build": "babel src -d lib",
     "prepublish": "npm run build"

@@ -5,7 +5,7 @@ Save SVGs as PNGs from the browser or as URIs in Node.js
 ## Installation
 
 ```
-npm install svg-saver
+npm install svg-saver-node
 ```
 
 ## Prerequisites
@@ -16,7 +16,7 @@ SvgSaver relies on JavaScript promises, so any browsers that don't natively supp
 
 ### Browser
 
-To save a PNG, include the script `svg-saver.js` in your page and create a new `SvgSaver` instance:
+To save a PNG, include the script `svg-saver-node.js` in your page and create a new `SvgSaver` instance:
 
 ```javascript
 var svgSaver = new SvgSaver(window);
@@ -84,7 +84,7 @@ Then create an `JSDOM` instance, decorate its `createElement` method to create a
 
 
 ```javascript
-const { createCanvas, Image } = require('canvas');
+const { createCanvas, Image } = require("canvas");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
@@ -99,7 +99,7 @@ const { window } = new JSDOM(`
 
 var backup = window.document.createElement;
 window.document.createElement = function (el) {
-    if (el === 'canvas') {
+    if (el === "canvas") {
         return createCanvas(500, 500);
     } else {
         return backup.bind(window.document)(el);
@@ -111,7 +111,7 @@ window.Image = Image;
 Now create a new `SvgSaver` instance and pass the `window` instance:
 
 ```javascript
-const SvgSaver = require("svg-saver");
+const SvgSaver = require("svg-saver-node");
 const svgSaver = new SvgSaver(window);
 
 svgSaver.svgAsDataUri(window.document.getElementById("diagram"), {}, function(uri) {
@@ -119,4 +119,4 @@ svgSaver.svgAsDataUri(window.document.getElementById("diagram"), {}, function(ur
 });
 ```
 
-Then you can use the library like in [browser](#Browser), but only "as uri" methods.
+Then you can use the library like in [browser](#browser), but only "as uri" methods.
