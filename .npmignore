@@ -1,1 +1,6 @@
-src/
+*.html
+bootstrap.min.css
+stalemate.ttf
+test.svg
+image.png
+index.js

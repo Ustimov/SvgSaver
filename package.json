@@ -1,12 +1,8 @@
 {
   "name": "svg-saver-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Save SVGs as PNGs from the browser or as Data URIs in Node.js",
-  "main": "lib/svg-saver-node.js",
-  "scripts": {
-    "build": "babel src -d lib",
-    "prepublish": "npm run build"
-  },
+  "main": "src/svg-saver-node.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Ustimov/SvgSaver"

@@ -129,7 +129,10 @@ function SvgSaver (ctx) {
         const canvas = document.createElement('canvas');
         const img = new Image();
         img.crossOrigin = 'anonymous';
-        img.onerror = () => reject(new Error(`Could not load ${href}`));
+        img.onerror = () => {
+          console.warn(`Could not load ${href}`);
+          resolve(true);
+        };
         img.onload = () => {
           canvas.width = img.width;
           canvas.height = img.height;
